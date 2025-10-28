@@ -45,6 +45,8 @@ function showToast(message, type = 'success') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 
+}
+
 function showError(msg) {
     console.error(msg);
 }
@@ -107,4 +109,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-export { cadastrarAluno, cadastrarLivro };
+export { cadastrarAluno, cadastrarLivro }; 
+
