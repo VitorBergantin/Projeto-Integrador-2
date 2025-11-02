@@ -1,14 +1,23 @@
 // Floating navigation button (hamburger) injected into pages
 (function(){
+  // Detect repository base path (useful for GitHub Pages project sites)
+  const repoName = 'Projeto-Integrador-2';
+  const pathname = window.location.pathname;
+  const repoBase = pathname.includes(`/${repoName}`)
+    ? pathname.slice(0, pathname.indexOf(`/${repoName}`)) + `/${repoName}`
+    : '';
+
+  const base = repoBase || '';
+
   const links = [
-    { label: 'Início', href: '/index.html' },
-    { label: 'Alunos - Início', href: '/ALUNOS/index.html' },
-    { label: 'Alunos - Cadastro', href: '/ALUNOS/cadastro.html' },
-    { label: 'Bibliotecário - Início', href: '/BIBLIOTECARIO/index.html' },
-    { label: 'Bibliotecário - Cadastro', href: '/BIBLIOTECARIO/cadastro.html' },
-    { label: 'Totem - Início', href: '/TOTEM/index.html' },
-    { label: 'Retirada', href: '/TOTEM/retirada.html' },
-    { label: 'Devolução', href: '/TOTEM/devolucao.html' }
+    { label: 'Início', href: `${base}/index.html` },
+    { label: 'Alunos - Início', href: `${base}/ALUNOS/index.html` },
+    { label: 'Alunos - Cadastro', href: `${base}/ALUNOS/cadastro.html` },
+    { label: 'Bibliotecário - Início', href: `${base}/BIBLIOTECARIO/index.html` },
+    { label: 'Bibliotecário - Cadastro', href: `${base}/BIBLIOTECARIO/cadastro.html` },
+    { label: 'Totem - Início', href: `${base}/TOTEM/index.html` },
+    { label: 'Retirada', href: `${base}/TOTEM/retirada.html` },
+    { label: 'Devolução', href: `${base}/TOTEM/devolucao.html` }
   ];
 
   // Create styles
