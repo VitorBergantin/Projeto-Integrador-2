@@ -1,12 +1,9 @@
 h1 {
-    h1 {
     background-color: rgba(100, 50, 210, 0.95);
     color: white;
     padding: 10px 20px;
     display: inline-block;
     border-radius: 8px;
-}
-
 }
 
 body {
