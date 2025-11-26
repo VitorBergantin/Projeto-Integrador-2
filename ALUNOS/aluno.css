@@ -15,7 +15,7 @@ header {
   text-align: center;
   display: inline-block;
   background-color: rgba(100, 50, 210, 0.95);
-  padding: 10px 20px;
+  border-radius: 8px;
   font-size: 1.6rem;
   font-weight: bold;;
 }
