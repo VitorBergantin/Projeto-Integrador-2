@@ -8,13 +8,15 @@ h1 {
 
 body {
     text-align: center;
-    background-image: url(https://images2.alphacoders.com/104/1042582.jpg)
+    color: white;
 }
 
 header {
   color: #fff;
   text-align: center;
-  padding: 10px;
+  display: inline-block;
+  color:rgba(100, 50, 210, 0.95);
+  padding: 1 rem;
   font-size: 1.5rem;
   font-weight: bold;
 }
