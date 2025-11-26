@@ -1,9 +1,5 @@
 h1 {
-    background-color: white;
-    display: inline-block;
-    padding: 7px 1rem;
-    border-radius: 8px;
-    color: white;
+    color: black;
 }
 
 body {
@@ -73,5 +69,5 @@ input[type="text"] {
 }
 
 .link:hover {
-    color: rgb(255, 255, 255);
+    color: rgba(100, 50, 210, 0.95);
 }
