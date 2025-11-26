@@ -25,21 +25,6 @@ h1 {
     color: black; 
 }
 
-/*
-form {
-    background-color: rgba(100, 50, 210, 0.95);
-    border-radius: 14px;
-    display: inline-block;
-    padding: 30px;
-    border-width: 1px;
-    border-style: solid;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3),
-                0 6px 20px 0 rgba(0,0,0,0.21);
-    width: 70%;
-    max-width: 400px;
-    text-align: center; 
-}
-*/
 form {
     background-color: rgba(100, 50, 210, 0.95);
     border-radius: 14px;

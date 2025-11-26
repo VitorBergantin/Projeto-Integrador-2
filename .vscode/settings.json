@@ -1,0 +1,6 @@
+{
+  // Habilita auto-fetch periódica no VS Code para mostrar mudanças remotas automaticamente
+  "git.autofetch": true,
+  // Trazer mudanças quando a janela ganhar foco também ajuda em sincronização
+  "git.fetchOnWindowFocus": true
+}
