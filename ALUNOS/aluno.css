@@ -3,7 +3,7 @@ h1 {
     display: inline-block;
     padding: 7px 1rem;
     border-radius: 8px;
-    color: rgb(0, 0, 0);
+    color: white;
 }
 
 body {
@@ -12,12 +12,11 @@ body {
 }
 
 header {
-  color: #fff;
   text-align: center;
   display: inline-block;
   color:rgba(100, 50, 210, 0.95);
-  padding: 1 rem;
-  font-size: 1.5rem;
+  padding: 1.5 rem;
+  font-size: 1.6rem;
   font-weight: bold;
 }
 
@@ -34,7 +33,7 @@ button {
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 label {
