@@ -91,3 +91,6 @@ input[type="text"] {
     outline: 2px solid rgba(100,50,210,0.25);
     outline-offset: 2px;
 }
+
+/* Centraliza o conteúdo principal das páginas do aluno */
+.center-main{ text-align:center; padding-top:48px; }
