@@ -10,3 +10,22 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neu
 .btn { display:inline-block; margin-top:12px; padding:8px 12px; background:#2563eb; color:white; border-radius:6px; text-decoration:none; }
 .note { margin-top:24px; color:#6b7280; font-size:0.9rem; }
 
+/* --- leaderboard layout --- */
+.leaderboard {
+	display:flex;
+	gap:24px;
+	align-items:flex-start;
+}
+.leaderboard .panel { flex:1; background:#fff; border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(16,24,40,0.06); }
+.leader { list-style:none; padding:0; margin:0; }
+.leader li { display:flex; align-items:center; gap:12px; padding:10px 6px; border-bottom:1px solid #f1f5f9; }
+.leader li:last-child { border-bottom: none; }
+.rank-badge { width:36px; height:36px; border-radius:50%; background:#111827; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+.avatar { width:44px; height:44px; border-radius:8px; background:linear-gradient(135deg,#eef2ff,#e0f2fe); display:flex; align-items:center; justify-content:center; font-weight:700; color:#1e293b; border:1px solid rgba(0,0,0,0.04); }
+.name { font-weight:600; }
+.meta { color:#6b7280; font-size:0.95rem; }
+.count { margin-left:auto; font-weight:700; color:#111827; }
+
+/* mobile stack */
+@media (max-width:880px){ .leaderboard { flex-direction:column; } }
+
