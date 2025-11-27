@@ -37,7 +37,7 @@ function setupCadastroLivros() {
         return;
       }
 
-      await setDoc(livroRef, { title: nome, autor, editora, codigo });
+      await setDoc(livroRef, { title: nome, autor, editora, codigo, disponivel: True});
       alert('Livro cadastrado com sucesso!');
       form.reset();
     } catch (error) {
