@@ -5,8 +5,11 @@
 // - cadastrar livros (coleção 'livros')
 // As funções usam o Firestore (instância importada de ../lib/firebase.js)
 // e as operações do SDK modular (collection, addDoc, serverTimestamp).
+// CORREÇÃO: Alterado o caminho da importação para usar o mesmo config do Totem.
+// CORREÇÃO FINAL: Unificando para usar o arquivo de configuração principal em src/lib/
 import { db } from "../lib/firebase.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 // Estilo CSS para o toast
 const style = document.createElement('style');
@@ -60,6 +63,18 @@ function showError(msg) {
     console.error(msg);
 }
 
+// Função para verificar se um código de livro já existe no Firestore
+async function codigoExiste(codigo) {
+    try {
+        const q = query(collection(db, 'livros'), where('codigo', '==', codigo.trim()));
+        const snap = await getDocs(q);
+        return !snap.empty; // retorna true se existe, false caso contrário
+    } catch (err) {
+        console.error('Erro ao verificar código duplicado:', err);
+        return false; // em caso de erro, permite prosseguir (validação falhou)
+    }
+}
+
 async function cadastrarAluno(form) {
     // Função responsável por coletar os valores do formulário de aluno,
     // validar campos obrigatórios e gravar um documento na coleção
@@ -69,8 +84,8 @@ async function cadastrarAluno(form) {
     const nome = form.querySelector('#nome')?.value.trim() || '';
     const situacaoEl = document.getElementById('situacao');
 
-    if (!ra || !nome) {
-        if (situacaoEl) situacaoEl.textContent = 'Preencha RA e Nome.';
+    if (!ra || !nome) { 
+        showToast('Preencha os campos RA e Nome.', 'error');
         return;
     }
 
@@ -81,6 +96,7 @@ async function cadastrarAluno(form) {
         const payload = {
             ra,
             nome,
+            situacao: 'ativo', // Garante que todo novo aluno seja 'ativo'
             createdAt: serverTimestamp() // usa horário do servidor
         };
 
@@ -111,7 +127,14 @@ async function cadastrarLivro(form) {
     const editora = form.querySelector('#editora')?.value.trim() || '';
 
     if (!codigo || !nome || !autor || !editora) {
-        alert('Preencha todos os campos.');
+        showToast('Preencha todos os campos do livro.', 'error');
+        return;
+    }
+
+    // Verificar se o código já existe
+    const existe = await codigoExiste(codigo);
+    if (existe) {
+        showToast(`Erro: já existe um livro com o código "${codigo}".`, 'error');
         return;
     }
 
@@ -122,7 +145,8 @@ async function cadastrarLivro(form) {
             nome,
             autor,
             editora,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            situacao: "disponível" // <-- CAMPO ADICIONADO AQUI
         };
 
         await addDoc(collection(db, 'livros'), payload);
@@ -139,17 +163,25 @@ async function cadastrarLivro(form) {
 }
 
 // Inicializa listeners automaticamente quando o módulo é importado em uma página com formulário
+// VERSÃO CORRIGIDA E MAIS ROBUSTA
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
-    if (!form) return;
+    // Procura especificamente pelo formulário de cadastro de aluno
+    const formAluno = document.querySelector('form#form-aluno');
+    if (formAluno) {
+        formAluno.addEventListener('submit', (e) => {
+            e.preventDefault();
+            cadastrarAluno(formAluno);
+        });
+    }
 
-    // Detecta campos para escolher o tipo de cadastro
-    if (form.querySelector('#RA')) {
-        form.addEventListener('submit', (e) => { e.preventDefault(); cadastrarAluno(form); });
-    } else if (form.querySelector('#codigo')) {
-        form.addEventListener('submit', (e) => { e.preventDefault(); cadastrarLivro(form); });
+    // Procura especificamente pelo formulário de cadastro de livro
+    const formLivro = document.querySelector('form#form-livro');
+    if (formLivro) {
+        formLivro.addEventListener('submit', (e) => {
+            e.preventDefault();
+            cadastrarLivro(formLivro);
+        });
     }
 });
 
-export { cadastrarAluno, cadastrarLivro }; 
-
+export { cadastrarAluno, cadastrarLivro };

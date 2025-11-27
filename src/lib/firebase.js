@@ -11,7 +11,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDX9ozw8vCbujgwSLlSNXmFLch5zeoXF6k",
   authDomain: "projeto-integrador-ii---9c0ce.firebaseapp.com",
   projectId: "projeto-integrador-ii---9c0ce",
-    storageBucket: "projeto-integrador-ii---9c0ce.appspot.com",
+  storageBucket: "projeto-integrador-ii---9c0ce.appspot.com",
   messagingSenderId: "1075511810637",
   appId: "1:1075511810637:web:5d4195bd873422ca339a04",
   measurementId: "G-X9YB6C5T23"

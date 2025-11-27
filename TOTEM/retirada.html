@@ -17,18 +17,14 @@
         <input type="text" name="ra" required>
       </label>
       <br><br>
-      <label>ID do Livro:
-        <input type="text" name="id_livro" required>
-      </label>
-      <br><br>
-      <label>Data de Retirada:
-        <input type="date" name="data_retirada" required>
+      <label>Código do Livro:
+        <input type="text" name="codigo_livro" required>
       </label>
       <br><br><br>
       <button type="submit">Confirmar Retirada</button><br><br>
-      <button><a href="index.html" class="link">Voltar ao Início</a></button>
+      <button type="button" onclick="window.location.href='index.html'">Voltar ao Início</button>
     </form>
   </main>
 </body>
-  <script src="../src/js/navigation.js" defer></script>
+  <script type="module" src="retirada.js" defer></script>
 </html>
