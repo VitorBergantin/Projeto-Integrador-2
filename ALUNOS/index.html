@@ -4,24 +4,18 @@
     <link href="aluno.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa do Aluno</title>
+    <title>Programa do Bibliotecário</title>
 </head>
+<header>
+    <h1>Cadastro de Livro</h1>
+</header>
 <body>
-    <header>
-        <h1>Programa do Aluno</h1>
-    </header>
-
-    <main class="center-main">
-        <p></p>
-        <div>
-            <a class="link btn-link" id="cadastrohtml" href="cadastro.html">Novo Aluno</a>
-        </div>
-        <br>
-        <div>
-            <button type="button" id="entrar" class="btn-link">Entrar</button>
-        </div>
-    </main>
-
-    <script src="../src/js/navigation.js" defer></script>
+    <br><br><br><br>
+    <form>
+        <button id="cadastrohtml" type="button" onclick="location.href='cadastro.html'">Cadastrar Aluno</button>
+        <br><br>
+        <button id="entrar" type="button" onclick="location.href='livrosDisponiveis.html'">Ver Livros Disponíveis</button>
+    </form>
 </body>
+    <script src="../src/js/navigation.js" defer></script>
 </html>

@@ -26,7 +26,6 @@ style.textContent = `
     z-index: 1000;
     animation: slideIn 0.3s ease-in-out;
 }
-c
 .toast.success { background: #4CAF50; }
 .toast.error { background: #f44336; }
 

@@ -30,7 +30,25 @@ export function showLivros(container){
   }catch(e){}
 
   // Painel de debug para capturar e exibir erros do console e exceções
-  let debugBox = document.createElement('pre');
+  // Só ativa o painel se o container tiver data-debug="true"
+  let debugBox = null;
+  const enableDebug = container && container.dataset && container.dataset.debug === 'true';
+  if (enableDebug) {
+    debugBox = document.createElement('pre');
+    debugBox.id = 'livros-debug';
+    debugBox.style.background = '#fff7e6';
+    debugBox.style.border = '1px solid #ffd966';
+    debugBox.style.padding = '10px';
+    debugBox.style.borderRadius = '6px';
+    debugBox.style.color = '#333';
+    debugBox.style.fontSize = '0.9rem';
+    debugBox.style.maxHeight = '180px';
+    debugBox.style.overflow = 'auto';
+    debugBox.style.whiteSpace = 'pre-wrap';
+    debugBox.style.marginBottom = '8px';
+    debugBox.textContent = 'Debug console:\n';
+    container.prepend(debugBox);
+  }
   debugBox.id = 'livros-debug';
   debugBox.style.background = '#fff7e6';
   debugBox.style.border = '1px solid #ffd966';
@@ -75,8 +93,10 @@ export function showLivros(container){
   const unhandledRejectionHandler = (ev) => {
     try{ pushDebug('UNHANDLED_REJECTION', ev && ev.reason ? (ev.reason.message || String(ev.reason)) : String(ev)); }catch(e){}
   };
-  window.addEventListener('error', winErrorHandler);
-  window.addEventListener('unhandledrejection', unhandledRejectionHandler);
+  if (enableDebug) {
+    window.addEventListener('error', winErrorHandler);
+    window.addEventListener('unhandledrejection', unhandledRejectionHandler);
+  }
 
   // Teste rápido: tentar ler 1 documento para validar permissões/regras
   (async ()=>{
@@ -218,20 +238,24 @@ export function showAllLivros(container){
     container.prepend(badge);
   }catch(e){}
 
-  let debugBox = document.createElement('pre');
-  debugBox.id = 'livros-debug';
-  debugBox.style.background = '#fff7e6';
-  debugBox.style.border = '1px solid #ffd966';
-  debugBox.style.padding = '10px';
-  debugBox.style.borderRadius = '6px';
-  debugBox.style.color = '#333';
-  debugBox.style.fontSize = '0.9rem';
-  debugBox.style.maxHeight = '180px';
-  debugBox.style.overflow = 'auto';
-  debugBox.style.whiteSpace = 'pre-wrap';
-  debugBox.style.marginBottom = '8px';
-  debugBox.textContent = 'Debug console:\n';
-  container.prepend(debugBox);
+  let debugBox = null;
+  const enableDebugAll = container && container.dataset && container.dataset.debug === 'true';
+  if (enableDebugAll) {
+    debugBox = document.createElement('pre');
+    debugBox.id = 'livros-debug';
+    debugBox.style.background = '#fff7e6';
+    debugBox.style.border = '1px solid #ffd966';
+    debugBox.style.padding = '10px';
+    debugBox.style.borderRadius = '6px';
+    debugBox.style.color = '#333';
+    debugBox.style.fontSize = '0.9rem';
+    debugBox.style.maxHeight = '180px';
+    debugBox.style.overflow = 'auto';
+    debugBox.style.whiteSpace = 'pre-wrap';
+    debugBox.style.marginBottom = '8px';
+    debugBox.textContent = 'Debug console:\n';
+    container.prepend(debugBox);
+  }
 
   function pushDebug(type, message){
     try{
@@ -250,8 +274,10 @@ export function showAllLivros(container){
 
   const winErrorHandler = (event) => { try{ pushDebug('UNCAUGHT_ERROR', event && event.error && event.error.message ? event.error.message : (event.message || String(event))); }catch(e){} };
   const unhandledRejectionHandler = (ev) => { try{ pushDebug('UNHANDLED_REJECTION', ev && ev.reason ? (ev.reason.message || String(ev.reason)) : String(ev)); }catch(e){} };
-  window.addEventListener('error', winErrorHandler);
-  window.addEventListener('unhandledrejection', unhandledRejectionHandler);
+  if (enableDebugAll) {
+    window.addEventListener('error', winErrorHandler);
+    window.addEventListener('unhandledrejection', unhandledRejectionHandler);
+  }
 
   (async ()=>{
     try{ if (auth) { try{ await signInAnonymously(auth); console.debug('Autenticação anônima realizada.'); }catch(authErr){ console.warn('Falha na autenticação anônima (não-fatal):', authErr && authErr.message ? authErr.message : authErr); } } }catch(e){ console.warn('Erro ao tentar sign-in anônimo:', e); }
