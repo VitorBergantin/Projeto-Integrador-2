@@ -1,6 +1,5 @@
 // TOTEM/retirada.js
 // Script para registrar empréstimos de livros no Firestore
-// Conecta à coleção "emprestimo" com RA do aluno, código do livro e timestamp
 
 import { db } from "../src/lib/firebase.js";
 import { collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
@@ -57,7 +56,7 @@ retiradaForm.addEventListener('submit', async (event) => {
   }
 
   try {
-    // 1. Verificar se o aluno existe (busca na coleção 'alunos')
+    // 1. Verificar se o aluno existe (coleção "alunos")
     const alunosRef = collection(db, "alunos");
     const alunoQuery = query(alunosRef, where("ra", "==", ra));
     const alunoSnapshot = await getDocs(alunoQuery);
@@ -67,7 +66,7 @@ retiradaForm.addEventListener('submit', async (event) => {
       return;
     }
 
-    // 2. Verificar se o livro existe e está disponível
+    // 2. Verificar se o livro existe
     const livrosRef = collection(db, "livros");
     const livroQuery = query(livrosRef, where("codigo", "==", codigoLivro));
     const livroSnapshot = await getDocs(livroQuery);
@@ -81,29 +80,30 @@ retiradaForm.addEventListener('submit', async (event) => {
     const livroData = livroDoc.data();
 
     console.log('Livro encontrado:', livroData);
-    console.log('Situação do livro:', livroData.situacao);
 
-    // Verificar disponibilidade (aceita valores vazios, null ou "disponível" - case insensitive)
-    const situacao = (livroData.situacao || '').toLowerCase().trim();
-    if (situacao && situacao !== 'disponível' && situacao !== '') {
-      showToast('Este livro não está disponível para retirada. Status: ' + livroData.situacao, 'error');
+    // 📌 NOVA VALIDAÇÃO — Usar campo "disponivel" (1 = ok / 0 = emprestado)
+    if (livroData.disponivel === 0) {
+      showToast('Este livro já está emprestado no momento.', 'error');
       return;
     }
 
-    // 3. Registrar o empréstimo na coleção "emprestimo" com data/hora
+    // 3. Registrar o empréstimo
     const emprestimoPayload = {
       ra: ra,
       codigoLivro: codigoLivro,
       nomeLivro: livroData.nome || 'Sem título',
-      dataRetirada: serverTimestamp(), // data e hora automática do servidor
+      dataRetirada: serverTimestamp(),
       status: "ativo"
     };
 
     await addDoc(collection(db, 'emprestimo'), emprestimoPayload);
 
-    // 4. Atualizar a situação do livro para "indisponível"
+    // 4. Atualizar a situação e disponibilidade
     const livroDocRef = doc(db, "livros", livroDoc.id);
-    await updateDoc(livroDocRef, { situacao: "indisponível" });
+
+    await updateDoc(livroDocRef, {
+      disponivel: 0  // 📌 atualiza campo numérico
+    });
 
     showToast(`✓ Empréstimo registrado! Livro "${livroData.nome}" retirado com sucesso.`, 'success');
     retiradaForm.reset();
