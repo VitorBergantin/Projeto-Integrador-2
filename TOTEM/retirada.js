@@ -1,51 +1,115 @@
-// CORREÇÃO: Unificando para usar o arquivo de configuração principal em src/lib/
+// TOTEM/retirada.js
+// Script para registrar empréstimos de livros no Firestore
+// Conecta à coleção "emprestimo" com RA do aluno, código do livro e timestamp
+
 import { db } from "../src/lib/firebase.js";
-import { collection, query, where, getDocs, doc, updateDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+
+// Estilo CSS para toast
+const style = document.createElement('style');
+style.textContent = `
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    display: none;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-in-out;
+}
+.toast.success { background: #4CAF50; }
+.toast.error { background: #f44336; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+`;
+document.head.appendChild(style);
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    toast.style.display = 'block';
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 const retiradaForm = document.querySelector('.formulario');
 
 retiradaForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const ra = retiradaForm.ra.value;
-  const idLivro = retiradaForm.codigo_livro.value; // CORREÇÃO: Usando o nome correto do campo do HTML
+  const ra = retiradaForm.ra.value.trim();
+  const codigoLivro = retiradaForm.codigo_livro.value.trim();
 
-  if (!ra || !idLivro) {
-    alert('Por favor, preencha todos os campos.');
-    return;
-  }
-
-  // 1. Encontrar o livro pelo ID
-  const livrosRef = collection(db, "livros");
-  // CORREÇÃO: O campo no banco de dados se chama "codigo", e não "id_livro".
-  // A consulta foi ajustada para buscar pelo campo "codigo".
-  const q = query(livrosRef, where("codigo", "==", idLivro));
-  const querySnapshot = await getDocs(q);
-
-  if (querySnapshot.empty) {
-    alert('Livro não encontrado com o ID informado.');
-    return;
-  }
-
-  const livroDoc = querySnapshot.docs[0]; // Pega o primeiro livro encontrado
-  const livroData = livroDoc.data();
-
-  // 2. Verificar a situação do livro
-  if (livroData.situacao !== 'disponível') {
-    alert('Este livro não está disponível para retirada.');
+  if (!ra || !codigoLivro) {
+    showToast('Preencha RA do aluno e código do livro.', 'error');
     return;
   }
 
   try {
-    // 3. Atualizar a situação do livro para "indisponível"
+    // 1. Verificar se o aluno existe (busca na coleção 'alunos')
+    const alunosRef = collection(db, "alunos");
+    const alunoQuery = query(alunosRef, where("ra", "==", ra));
+    const alunoSnapshot = await getDocs(alunoQuery);
+
+    if (alunoSnapshot.empty) {
+      showToast('Aluno com RA ' + ra + ' não encontrado.', 'error');
+      return;
+    }
+
+    // 2. Verificar se o livro existe e está disponível
+    const livrosRef = collection(db, "livros");
+    const livroQuery = query(livrosRef, where("codigo", "==", codigoLivro));
+    const livroSnapshot = await getDocs(livroQuery);
+
+    if (livroSnapshot.empty) {
+      showToast('Livro com código ' + codigoLivro + ' não encontrado.', 'error');
+      return;
+    }
+
+    const livroDoc = livroSnapshot.docs[0];
+    const livroData = livroDoc.data();
+
+    console.log('Livro encontrado:', livroData);
+    console.log('Situação do livro:', livroData.situacao);
+
+    // Verificar disponibilidade (aceita valores vazios, null ou "disponível" - case insensitive)
+    const situacao = (livroData.situacao || '').toLowerCase().trim();
+    if (situacao && situacao !== 'disponível' && situacao !== '') {
+      showToast('Este livro não está disponível para retirada. Status: ' + livroData.situacao, 'error');
+      return;
+    }
+
+    // 3. Registrar o empréstimo na coleção "emprestimo" com data/hora
+    const emprestimoPayload = {
+      ra: ra,
+      codigoLivro: codigoLivro,
+      nomeLivro: livroData.nome || 'Sem título',
+      dataRetirada: serverTimestamp(), // data e hora automática do servidor
+      status: "ativo"
+    };
+
+    await addDoc(collection(db, 'emprestimo'), emprestimoPayload);
+
+    // 4. Atualizar a situação do livro para "indisponível"
     const livroDocRef = doc(db, "livros", livroDoc.id);
     await updateDoc(livroDocRef, { situacao: "indisponível" });
 
-    // CORREÇÃO: O campo no banco de dados se chama "nome", e não "titulo".
-    alert(`Livro "${livroData.nome}" retirado com sucesso!`);
-    retiradaForm.reset(); // Limpa o formulário
+    showToast(`✓ Empréstimo registrado! Livro "${livroData.nome}" retirado com sucesso.`, 'success');
+    retiradaForm.reset();
+
   } catch (error) {
-    console.error("Erro ao atualizar a situação do livro: ", error);
-    alert('Ocorreu um erro ao processar a retirada.');
+    console.error("Erro ao processar retirada:", error);
+    showToast('Erro: ' + (error.message || 'Falha ao registrar empréstimo'), 'error');
   }
 });
