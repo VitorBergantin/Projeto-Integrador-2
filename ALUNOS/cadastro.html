@@ -11,14 +11,16 @@
     </header>
     <body>
         <br><br><br><br>
-        <form>
-            <label id="label-RA" class="pergunta">Digite seu RA: </label><br>
+        <form id="form-aluno">
+            <label for="RA" id="label-RA" class="pergunta">Digite seu RA: </label><br>
             <input id="RA" type="text" placeholder="RA" required>
             <br><br>
-            <label id="label-nome" class="pergunta">Seu nome: </label><br>
+            <label for="nome" id="label-nome" class="pergunta">Seu nome: </label><br>
             <input id="nome" type="text" placeholder="Nome" required>
             <br><br><br>
             <div class="botao">
+            <!-- status / situação do envio -->
+            <div id="situacao" class="situacao" aria-live="polite"></div>
             <button type="submit" id="cadastrar">Cadastrar</button>
             <br><br>
             <button id="entrar" type="button" onclick="location.href='index.html'">Voltar ao Início</button>
