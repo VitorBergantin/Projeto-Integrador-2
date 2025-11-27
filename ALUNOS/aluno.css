@@ -1,7 +1,7 @@
 h1 {
     background-color: rgba(100, 50, 210, 0.95);
     color: white;
-    padding: 10px 20px;
+    padding: 10px;
     border-radius: 8px;
     display: inline-block;
 }
@@ -13,14 +13,13 @@ body {
 
 header {
   text-align: center;
-  display: inline-block;
   font-size: 1.6rem;
-  font-weight: bold;;
+  font-weight: bold;
 }
 
 button {
     width: 100%;
-    padding: 10px;
+    padding: 9px;
     border-radius: 10px;
     transition: all 0.4s ease;
     color: black;
