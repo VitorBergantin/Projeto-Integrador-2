@@ -11,24 +11,28 @@
 			<h1>Rankeamento — Placeholder</h1>
 			<p class="subtitle">Página inicial do módulo de rankeamento. Aqui será exibido o ranking geral dos leitores e livros.</p>
 
-			<section class="cards">
-				<article class="card">
+			<section class="leaderboard">
+				<div class="panel">
 					<h2>Top Leitores</h2>
-					<p>Mostra os usuários que mais leram (ex.: Usuário X — 10 livros).</p>
-					<a class="btn" href="top-readers.html">Ver Top Leitores</a>
-				</article>
+					<p class="subtitle">Usuários que mais leram — posição e quantidade de leituras.</p>
+					<!-- lista será preenchida pelo src/js/rank.js -->
+					<ul class="leader" id="top-readers-list">
+						<li><div class="rank-badge">1</div><div class="avatar">U</div><div class="name">UsuárioX</div><div class="meta">Posição 1</div><div class="count">10</div></li>
+						<li><div class="rank-badge">2</div><div class="avatar">Y</div><div class="name">UsuárioY</div><div class="meta">Posição 2</div><div class="count">8</div></li>
+						<li><div class="rank-badge">3</div><div class="avatar">Z</div><div class="name">UsuárioZ</div><div class="meta">Posição 3</div><div class="count">7</div></li>
+					</ul>
+				</div>
 
-				<article class="card">
+				<div class="panel">
 					<h2>Top Livros</h2>
-					<p>Livros mais lidos / mais populares entre os usuários.</p>
-					<a class="btn" href="top-books.html">Ver Top Livros</a>
-				</article>
+					<p class="subtitle">Livros mais lidos entre os usuários — posição e número de leituras.</p>
+					<ul class="leader" id="top-books-list">
+						<li><div class="rank-badge">1</div><div class="avatar">A</div><div class="name">Livro A</div><div class="meta">Categoria</div><div class="count">42</div></li>
+						<li><div class="rank-badge">2</div><div class="avatar">B</div><div class="name">Livro B</div><div class="meta">Categoria</div><div class="count">33</div></li>
+						<li><div class="rank-badge">3</div><div class="avatar">C</div><div class="name">Livro C</div><div class="meta">Categoria</div><div class="count">21</div></li>
+					</ul>
+				</div>
 
-				<article class="card">
-					<h2>Visão Individual</h2>
-					<p>Ranking de um usuário específico (quantos livros leu, posição no ranking).</p>
-					<p class="muted">(Implementação futura: consulta ao banco e API.)</p>
-				</article>
 			</section>
 
 			<footer class="note">Este é um placeholder — em seguida iremos implementar a extração dos dados do Firestore e a renderização dinâmica.</footer>
