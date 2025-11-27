@@ -88,7 +88,7 @@ retiradaForm.addEventListener('submit', async (event) => {
     }
 
     // 3. Registrar o empréstimo
-    const emprestimoPayload = {
+    const emprestimosPayload = {
       ra: ra,
       codigoLivro: codigoLivro,
       nomeLivro: livroData.nome || 'Sem título',
@@ -96,7 +96,7 @@ retiradaForm.addEventListener('submit', async (event) => {
       status: "ativo"
     };
 
-    await addDoc(collection(db, 'emprestimo'), emprestimoPayload);
+    await addDoc(collection(db, 'emprestimos'), emprestimosPayload);
 
     // 4. Atualizar a situação e disponibilidade
     const livroDocRef = doc(db, "livros", livroDoc.id);

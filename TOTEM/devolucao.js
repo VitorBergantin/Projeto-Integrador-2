@@ -83,27 +83,25 @@ devolucaoForm.addEventListener('submit', async (event) => {
         const livroData = livroDoc.data();
 
         // 3. Verificar se existe empréstimo ativo
-        const emprestimoRef = collection(db, "emprestimo");
-        const emprestimoQuery = query(
-            emprestimoRef,
+        const emprestimosRef = collection(db, "emprestimos");
+        const emprestimosQuery = query(
+            emprestimosRef,
             where("ra", "==", ra),
             where("codigoLivro", "==", codigoLivro),
             where("status", "==", "ativo")
         );
 
-        const emprestimoSnapshot = await getDocs(emprestimoQuery);
+        const emprestimosSnapshot = await getDocs(emprestimosQuery);
 
-        if (emprestimoSnapshot.empty) {
+        if (emprestimosSnapshot.empty) {
             showToast("Nenhum empréstimo ativo encontrado para este aluno e livro.", "error");
             return;
         }
 
-        const emprestimoDoc = emprestimoSnapshot.docs[0];
-        const emprestimoDocRef = doc(db, "emprestimo", emprestimoDoc.id);
+        const emprestimosDoc = emprestimosSnapshot.docs[0];
+        const emprestimosDocRef = doc(db, "emprestimos", emprestimosDoc.id);
 
-        // 4. Atualizar empréstimo → devolvido
-        await updateDoc(emprestimoDocRef, {
-            status: "devolvido",
+        await updateDoc(emprestimosDocRef, {
             dataDevolucao: serverTimestamp()
         });
 
