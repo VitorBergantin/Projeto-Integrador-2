@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Bibliotecário — Livros</title>
+		<link href="livrosDisponiveis.css" rel="stylesheet">
+	</head>
+	<body>
+		<main class="container">
+			<h1>Livros disponíveis</h1>
+			<section id="livros-container">
+				<p>Carregando livros...</p>
+			</section>
+		</main>
+
+		<script src="../src/js/navigation.js" defer></script>
+		<!-- Flag para ativar o modo bibliotecário (renderiza todos os livros) -->
+		<script>window.__LIBRARIAN_PAGE = true;</script>
+		<script type="module" src="../src/js/livrosDisponiveis.js"></script>
+	</body>
+</html>
