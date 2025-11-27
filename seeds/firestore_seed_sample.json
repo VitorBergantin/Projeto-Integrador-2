@@ -1,0 +1,15 @@
+{
+  "livros": [
+    { "nome": "O Senhor dos Anéis", "autor": "J.R.R. Tolkien", "codigo": "LS001", "categoria": "Fantasia", "createdAt": { "_type": "serverTimestamp" } },
+    { "nome": "Dom Casmurro", "autor": "Machado de Assis", "codigo": "BR001", "categoria": "Clássicos", "createdAt": { "_type": "serverTimestamp" } },
+    { "nome": "1984", "autor": "George Orwell", "codigo": "EN1984", "categoria": "Distopia", "createdAt": { "_type": "serverTimestamp" } }
+  ],
+  "emprestimos": [
+    { "ra": "2021001", "livroId": "LS001", "dataRetirada": "2025-11-01", "createdAt": { "_type": "serverTimestamp" } },
+    { "ra": "2021002", "livroId": "BR001", "dataRetirada": "2025-11-05", "createdAt": { "_type": "serverTimestamp" } },
+    { "ra": "2021003", "livroId": "EN1984", "dataRetirada": "2025-11-10", "createdAt": { "_type": "serverTimestamp" } }
+  ],
+  "devolucoes": [
+    { "ra": "2021001", "livroId": "LS001", "createdAt": { "_type": "serverTimestamp" } }
+  ]
+}

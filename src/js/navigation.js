@@ -10,6 +10,10 @@
   const base = repoBase || '';
 
   const links = [
+    { label: 'Rankeamento - Início', href: `${base}/RANKEAMENTO/rank.html` },
+    { label: 'Top Leitores', href: `${base}/RANKEAMENTO/top-readers.html` },
+    { label: 'Top Livros', href: `${base}/RANKEAMENTO/top-books.html` },
+    // Top Fornecedores link removed
     { label: 'Início', href: `${base}/index.html` },
     { label: 'Alunos - Início', href: `${base}/ALUNOS/index.html` },
     { label: 'Alunos - Cadastro', href: `${base}/ALUNOS/cadastro.html` },

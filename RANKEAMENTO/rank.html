@@ -8,34 +8,30 @@
 	</head>
 	<body>
 		<main class="container">
-			<h1>Rankeamento — Placeholder</h1>
+			<h1>Rankeamento</h1>
 			<p class="subtitle">Página inicial do módulo de rankeamento. Aqui será exibido o ranking geral dos leitores e livros.</p>
 
 			<section class="leaderboard">
 				<div class="panel">
 					<h2>Top Leitores</h2>
+						<a href="top-readers.html" class="btn secondary small">Ver todos</a>
 					<p class="subtitle">Usuários que mais leram — posição e quantidade de leituras.</p>
 					<!-- lista será preenchida pelo src/js/rank.js -->
-					<ul class="leader" id="top-readers-list">
-						<li><div class="rank-badge">1</div><div class="avatar">U</div><div class="name">UsuárioX</div><div class="meta">Posição 1</div><div class="count">10</div></li>
-						<li><div class="rank-badge">2</div><div class="avatar">Y</div><div class="name">UsuárioY</div><div class="meta">Posição 2</div><div class="count">8</div></li>
-						<li><div class="rank-badge">3</div><div class="avatar">Z</div><div class="name">UsuárioZ</div><div class="meta">Posição 3</div><div class="count">7</div></li>
-					</ul>
+					<ul class="leader" id="top-readers-list" aria-label="Top leitores"></ul>
 				</div>
+
+				<!-- Painel de Fornecedores removido por solicitação -->
 
 				<div class="panel">
 					<h2>Top Livros</h2>
+						<a href="top-books.html" class="btn secondary small">Ver todos</a>
 					<p class="subtitle">Livros mais lidos entre os usuários — posição e número de leituras.</p>
-					<ul class="leader" id="top-books-list">
-						<li><div class="rank-badge">1</div><div class="avatar">A</div><div class="name">Livro A</div><div class="meta">Categoria</div><div class="count">42</div></li>
-						<li><div class="rank-badge">2</div><div class="avatar">B</div><div class="name">Livro B</div><div class="meta">Categoria</div><div class="count">33</div></li>
-						<li><div class="rank-badge">3</div><div class="avatar">C</div><div class="name">Livro C</div><div class="meta">Categoria</div><div class="count">21</div></li>
-					</ul>
+					<ul class="leader" id="top-books-list" aria-label="Top livros"></ul>
 				</div>
 
 			</section>
 
-			<footer class="note">Este é um placeholder — em seguida iremos implementar a extração dos dados do Firestore e a renderização dinâmica.</footer>
+			<footer class="note">Dados exibidos dinamicamente a partir do Firestore quando presentes — fallback para dados mock quando necessário.</footer>
 		</main>
 
 		<!-- Script de renderização de placeholders do rank (mock) -->
