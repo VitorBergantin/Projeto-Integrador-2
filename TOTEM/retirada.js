@@ -80,8 +80,13 @@ retiradaForm.addEventListener('submit', async (event) => {
     const livroDoc = livroSnapshot.docs[0];
     const livroData = livroDoc.data();
 
-    if (livroData.situacao !== 'disponível') {
-      showToast('Este livro não está disponível para retirada.', 'error');
+    console.log('Livro encontrado:', livroData);
+    console.log('Situação do livro:', livroData.situacao);
+
+    // Verificar disponibilidade (aceita valores vazios, null ou "disponível" - case insensitive)
+    const situacao = (livroData.situacao || '').toLowerCase().trim();
+    if (situacao && situacao !== 'disponível' && situacao !== '') {
+      showToast('Este livro não está disponível para retirada. Status: ' + livroData.situacao, 'error');
       return;
     }
 
