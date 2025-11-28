@@ -88,7 +88,7 @@ devolucaoForm.addEventListener('submit', async (event) => {
             emprestimosRef,
             where("ra", "==", ra),
             where("codigoLivro", "==", codigoLivro),
-            where("status", "==", "ativo")
+            where("disponivel", "==", 0)
         );
 
         const emprestimosSnapshot = await getDocs(emprestimosQuery);
