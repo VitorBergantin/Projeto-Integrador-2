@@ -90,14 +90,32 @@ async function cadastrarAluno(form) {
 
     if (situacaoEl) situacaoEl.textContent = 'Enviando...';
 
+    // verifica se já existe o mesmo RA (bloqueia qualquer cadastro com RA duplicado)
+    try {
+        const q = query(collection(db, 'alunos'), where('ra','==', ra));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            // já existe pelo menos um aluno com este RA
+            showToast('Já existe um aluno com este RA.', 'error');
+            if (situacaoEl) situacaoEl.textContent = 'RA já cadastrado.';
+            return;
+        }
+    } catch(checkErr) {
+        // falha na verificação não impede o cadastro — apenas logamos
+        console.warn('Falha ao verificar duplicidade de aluno:', checkErr && checkErr.message ? checkErr.message : checkErr);
+    }
+
     try {
         // Monta o objeto que será gravado no Firestore
         const payload = {
             ra,
             nome,
-            situacao: 'ativo', // Garante que todo novo aluno seja 'ativo'
             createdAt: serverTimestamp() // usa horário do servidor
         };
+
+        // desabilitar botão de submit para evitar múltiplos submits enquanto grava
+        const submitBtn = form.querySelector('[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
 
         // Insere documento na coleção 'alunos'
         await addDoc(collection(db, 'alunos'), payload);
@@ -106,11 +124,15 @@ async function cadastrarAluno(form) {
         showToast('Aluno cadastrado com sucesso!', 'success');
         if (situacaoEl) situacaoEl.textContent = 'Cadastro realizado com sucesso!';
         form.reset();
+        if (submitBtn) submitBtn.disabled = false;
     } catch (err) {
         // Em caso de erro, loga e informa o usuário
         console.error('Erro ao cadastrar aluno:', err);
         showToast('Erro ao cadastrar aluno. Tente novamente.', 'error');
         if (situacaoEl) situacaoEl.textContent = 'Erro ao cadastrar. Veja o console.';
+        // re-habilita botão caso tenha falhado
+        const submitBtn2 = form.querySelector('[type="submit"]');
+        if (submitBtn2) submitBtn2.disabled = false;
         showError(err);
     }
 }
@@ -145,7 +167,7 @@ async function cadastrarLivro(form) {
             autor,
             editora,
             createdAt: serverTimestamp(),
-            situacao: "disponível" // <-- CAMPO ADICIONADO AQUI
+            disponivel: 1
         };
 
         await addDoc(collection(db, 'livros'), payload);
