@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Livros Emprestados</title>
+  <link rel="stylesheet" href="bibliotecario.css">
+  <style>
+    /* Estilos específicos para a tabela do relatório */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .no-results {
+      text-align: center;
+      font-style: italic;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Relatório de Livros Emprestados</h1>
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Livro</th>
+          <th>RA do Aluno</th>
+          <th>Data da Retirada</th>
+        </tr>
+      </thead>
+      <tbody id="relatorio-corpo">
+        <!-- As linhas de dados serão inseridas aqui pelo JavaScript -->
+      </tbody>
+    </table>
+    <br>
+    <button type="button" onclick="window.location.href='index.html'">Voltar ao Início</button>
+  </main>
+
+  <script type="module" src="relatorio.js"></script>
+</body>
+</html>
