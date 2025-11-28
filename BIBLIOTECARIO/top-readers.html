@@ -3,23 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Top Livros — Rankeamento</title>
+    <title>Top Leitores — Rankeamento</title>
     <link rel="stylesheet" href="rank.css">
   </head>
   <body>
     <main class="container">
-      <h1>Top Livros</h1>
-      <p class="subtitle">Livros mais lidos / populares. Use os eventos gravados no sistema para montar o ranking.</p>
+      <h1>Top Leitores</h1>
+      <p class="subtitle">Lista dos usuários que mais leram. Use os dados registrados por retiradas/devoluções para contar leituras/retornos.</p>
 
       <section class="placeholder-list">
         <!-- container que será preenchido dinamicamente pelo rank.js -->
-        <ul id="top-books-list" class="leader" aria-label="Top livros" aria-live="polite" role="list"></ul>
+        <ul id="top-readers-list" class="leader" aria-label="Top leitores" aria-live="polite" role="list"></ul>
       </section>
 
       <a class="btn" href="rank.html">Voltar ao Rankeamento</a>
-      <a class="btn secondary" href="top-readers.html">Ver Top Leitores</a>
-      <a class="btn secondary" href="top-readers.html">Ver Top Leitores</a>
-    </main>
+</main>
     <script type="module" src="../src/js/rank.js" defer></script>
     <script src="../src/js/navigation.js" defer></script>
   </body>
