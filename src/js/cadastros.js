@@ -117,7 +117,6 @@ async function cadastrarAluno(form) {
         const payload = {
             ra,
             nome,
-            situacao: 'ativo', // Garante que todo novo aluno seja 'ativo'
             createdAt: serverTimestamp() // usa horário do servidor
         };
 
@@ -175,7 +174,7 @@ async function cadastrarLivro(form) {
             autor,
             editora,
             createdAt: serverTimestamp(),
-            situacao: "disponível" // <-- CAMPO ADICIONADO AQUI
+            disponivel: 1
         };
 
         await addDoc(collection(db, 'livros'), payload);
