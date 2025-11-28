@@ -90,22 +90,15 @@ async function cadastrarAluno(form) {
 
     if (situacaoEl) situacaoEl.textContent = 'Enviando...';
 
-    // verifica se já existe o mesmo RA + nome (case-insensitive comparision of name)
+    // verifica se já existe o mesmo RA (bloqueia qualquer cadastro com RA duplicado)
     try {
         const q = query(collection(db, 'alunos'), where('ra','==', ra));
         const snap = await getDocs(q);
         if (!snap.empty) {
-            // se houver documentos com mesmo RA, verificar se algum tem nome igual (ignora case/whitespace)
-            const normalizedTarget = nome.trim().toLowerCase();
-            const foundSame = snap.docs.some(d => {
-                const n = (d.data().nome || '').toString().trim().toLowerCase();
-                return n === normalizedTarget;
-            });
-            if (foundSame) {
-                showToast('Já existe um aluno com este RA e nome idênticos.', 'error');
-                if (situacaoEl) situacaoEl.textContent = 'Aluno já cadastrado.';
-                return;
-            }
+            // já existe pelo menos um aluno com este RA
+            showToast('Já existe um aluno com este RA.', 'error');
+            if (situacaoEl) situacaoEl.textContent = 'RA já cadastrado.';
+            return;
         }
     } catch(checkErr) {
         // falha na verificação não impede o cadastro — apenas logamos
