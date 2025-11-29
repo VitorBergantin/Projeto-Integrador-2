@@ -161,6 +161,7 @@ async function cadastrarLivro(form) {
     }
 
     try {
+        console.log('[cadastros] cadastrarLivro: iniciando cadastro do livro', { codigo, nome });
         // desabilitar botão de submit para evitar múltiplos uploads
         const submitBtn = form.querySelector('[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
@@ -179,6 +180,7 @@ async function cadastrarLivro(form) {
         const fileInput = form.querySelector('#coverInput');
         const file = fileInput?.files?.[0];
         if (file) {
+            console.log('[cadastros] arquivo selecionado para upload:', file.name, 'tamanho=', file.size);
             // validações básicas: tipo e tamanho
             if (!file.type.startsWith('image/')) {
                 showToast('Capa deve ser um arquivo de imagem.', 'error');
@@ -200,9 +202,14 @@ async function cadastrarLivro(form) {
             // upload com progresso mínimo
             await new Promise((resolve, reject) => {
                 const task = uploadBytesResumable(sRef, file);
-                task.on('state_changed', null, (err) => reject(err), async () => {
+                task.on('state_changed', (snap) => {
+                    // opcional: progresso
+                    const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+                    console.log('[cadastros] upload progresso %', pct);
+                }, (err) => reject(err), async () => {
                     try {
                         const url = await getDownloadURL(task.snapshot.ref);
+                        console.log('[cadastros] upload concluído, url=', url);
                         payload.coverUrl = url;
                         resolve(url);
                     } catch (e) { reject(e); }
@@ -210,7 +217,9 @@ async function cadastrarLivro(form) {
             });
         }
 
+        console.log('[cadastros] Gravando documento do livro no Firestore...', payload);
         await addDoc(collection(db, 'livros'), payload);
+        console.log('[cadastros] Livro cadastrado com sucesso no Firestore');
 
         // Feedback ao usuário e limpeza do formulário
         showToast('Livro cadastrado com sucesso!', 'success');
