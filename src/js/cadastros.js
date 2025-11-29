@@ -11,7 +11,7 @@ import { db, storage, auth } from "../lib/firebase.js";
 
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // Estilo CSS para o toast
 const style = document.createElement('style');
@@ -37,6 +37,51 @@ style.textContent = `
 }
 `;
 document.head.appendChild(style);
+
+// Tentar autenticar anonimamente assim que o script carregar
+(async () => {
+    try {
+        await signInAnonymously(auth);
+        console.log('[cadastros] signInAnonymously OK (init)');
+    } catch (e) {
+        console.warn('[cadastros] signInAnonymously init falhou:', e && e.message ? e.message : e);
+    }
+    try { onAuthStateChanged(auth, u => console.log('[cadastros] auth state changed:', !!u)); } catch (e) {}
+})();
+
+// Helper reutilizável para upload de arquivo com progresso (retorna URL) — exportado para ser usado por outras páginas
+async function uploadFileToStorage(file, path, statusEl = null) {
+    if (!file) throw new Error('Arquivo inválido');
+    if (!path) throw new Error('Caminho inválido');
+
+    // garantir autenticação anônima antes do upload
+    try { await signInAnonymously(auth); } catch (e) { /* ignora, pode já estar autenticado */ }
+
+    const sRef = storageRef(storage, path);
+
+    return await new Promise((resolve, reject) => {
+        const task = uploadBytesResumable(sRef, file);
+
+        task.on('state_changed', snap => {
+            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            console.log('[uploadFileToStorage] progresso', pct);
+            if (statusEl) statusEl.textContent = `Upload: ${pct}%`;
+        }, err => {
+            console.error('[uploadFileToStorage] erro', err);
+            if (statusEl) statusEl.textContent = `Erro no upload: ${err && err.message ? err.message : err}`;
+            reject(err);
+        }, async () => {
+            try {
+                const url = await getDownloadURL(task.snapshot.ref);
+                if (statusEl) statusEl.textContent = 'Upload concluído';
+                resolve(url);
+            } catch (e) {
+                if (statusEl) statusEl.textContent = `Erro ao obter url: ${e && e.message ? e.message : e}`;
+                reject(e);
+            }
+        });
+    });
+}
 
 // Função para mostrar toast (notificação visual rápida)
 // message: texto a ser exibido
@@ -205,35 +250,15 @@ async function cadastrarLivro(form) {
             // garantir autenticação anônima (muitos projetos obrigam auth para escrita)
             try { await signInAnonymously(auth); } catch (err) { /* ignora, pode já estar autenticado */ }
 
-            // upload com progresso mínimo e feedback ao usuário
-            await new Promise((resolve, reject) => {
-                const task = uploadBytesResumable(sRef, file);
-                task.on('state_changed', (snap) => {
-                    const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-                    console.log('[cadastros] upload progresso %', pct);
-                    if (statusEl) statusEl.textContent = `Upload: ${pct}%`;
-                }, (err) => {
-                    console.error('[cadastros] upload falhou', err);
-                    if (statusEl) statusEl.textContent = `Erro no upload: ${err && err.message ? err.message : err}`;
-                    showToast(err && err.message ? `Upload falhou: ${err.message}` : 'Erro no upload', 'error');
-                    if (submitBtn) submitBtn.disabled = false;
-                    reject(err);
-                }, async () => {
-                    try {
-                        const url = await getDownloadURL(task.snapshot.ref);
-                        console.log('[cadastros] upload concluído, url=', url);
-                        payload.coverUrl = url;
-                        if (statusEl) statusEl.textContent = 'Upload concluído';
-                        resolve(url);
-                    } catch (e) {
-                        console.error('[cadastros] erro getDownloadURL', e);
-                        if (statusEl) statusEl.textContent = `Erro obtendo URL: ${e && e.message ? e.message : e}`;
-                        showToast(e && e.message ? `Erro ao obter URL: ${e.message}` : 'Erro ao obter URL', 'error');
-                        if (submitBtn) submitBtn.disabled = false;
-                        reject(e);
-                    }
-                });
-            });
+            // upload (reutiliza helper centralizado)
+            try {
+                payload.coverUrl = await uploadFileToStorage(file, path, statusEl);
+            } catch (upErr) {
+                console.error('[cadastros] upload falhou', upErr);
+                // já mostramos mensagem no helper; reabilita botão e aborta
+                if (submitBtn) submitBtn.disabled = false;
+                throw upErr;
+            }
         }
 
         console.log('[cadastros] Gravando documento do livro no Firestore...', payload);
@@ -299,4 +324,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-export { cadastrarAluno, cadastrarLivro };
+export { cadastrarAluno, cadastrarLivro, uploadFileToStorage };

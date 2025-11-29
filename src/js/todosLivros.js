@@ -2,6 +2,7 @@
 import { db, auth } from "../lib/firebase.js";
 import { collection, query, orderBy, onSnapshot, getDocs, limit, updateDoc, doc as docRef } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+import { uploadFileToStorage } from "./cadastros.js";
 
 function escapeHtml(s){
   return String(s).replace(/[&<>"'`]/g, c => ({
@@ -182,6 +183,42 @@ function renderEditForm(cardEl, docId, current) {
   disponivelLabel.appendChild(document.createTextNode(' Disponível'));
 
   const saveBtn = document.createElement('button');
+    // campo para trocar a capa
+    const coverInput = document.createElement('input');
+    coverInput.type = 'file';
+    coverInput.accept = 'image/*';
+    coverInput.style.display = 'block';
+    coverInput.style.margin = '8px 0';
+
+    const coverPreview = document.createElement('div');
+    coverPreview.className = 'cover-preview';
+    if (current.coverUrl) {
+      const img = document.createElement('img');
+      img.src = current.coverUrl;
+      img.alt = current.nome || 'Capa';
+      img.style.maxWidth = '150px';
+      img.style.display = 'block';
+      coverPreview.appendChild(img);
+    }
+
+    const statusEl = document.createElement('div');
+    statusEl.className = 'upload-status';
+    statusEl.style.marginTop = '6px';
+
+    // preview local quando usuário escolhe nova capa
+    coverInput.addEventListener('change', () => {
+      const f = coverInput.files?.[0];
+      coverPreview.innerHTML = '';
+      if (!f) return;
+      if (!f.type.startsWith('image/')) {
+        coverPreview.textContent = 'Arquivo selecionado não é imagem.';
+        return;
+      }
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      img.style.maxWidth = '150px';
+      coverPreview.appendChild(img);
+    });
   saveBtn.type = 'button'; saveBtn.textContent = 'Salvar';
   const cancelBtn = document.createElement('button');
   cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancelar';
@@ -201,6 +238,27 @@ function renderEditForm(cardEl, docId, current) {
 
       // garantir auth anônimo antes de tentar gravar
       try { await signInAnonymously(auth); } catch (e) { /* ignore */ }
+
+      // se tem nova capa selecionada, faz upload primeiro
+      const newFile = coverInput.files?.[0];
+      if (newFile) {
+        try {
+          // validações básicas antes do upload
+          if (!newFile.type.startsWith('image/')) throw new Error('Arquivo não é uma imagem');
+          const maxBytes = 3 * 1024 * 1024;
+          if (newFile.size > maxBytes) throw new Error('Imagem maior que 3MB');
+
+          const safeName = (newFile.name || 'cover').replace(/[^a-z0-9.\-\_\.]/gi, '_');
+          const path = `livros/covers/${codigoInput.value.trim() || docId}-${Date.now()}-${safeName}`;
+          const url = await uploadFileToStorage(newFile, path, statusEl);
+          payload.coverUrl = url;
+        } catch (upErr) {
+          console.error('Erro no upload da nova capa', upErr);
+          alert('Erro no upload da capa: ' + (upErr && upErr.message ? upErr.message : upErr));
+          saveBtn.disabled = false; cancelBtn.disabled = false;
+          return;
+        }
+      }
 
       await updateDoc(docRef(db, 'livros', docId), payload);
       alert('Livro atualizado com sucesso.');
@@ -226,6 +284,10 @@ function renderEditForm(cardEl, docId, current) {
   form.appendChild(codigoInput);
   form.appendChild(document.createElement('br'));
   form.appendChild(disponivelLabel);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(coverInput);
+  form.appendChild(coverPreview);
+  form.appendChild(statusEl);
   form.appendChild(document.createElement('br'));
   form.appendChild(saveBtn);
   form.appendChild(cancelBtn);
