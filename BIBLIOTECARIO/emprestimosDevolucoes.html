@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações da Biblioteca</title>
+    <link rel="stylesheet" href="todosLivros.css">
+
+    <style>
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Movimentações da Biblioteca</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>RA</th>
+                <th>Código do Livro</th>
+                <th>Tipo</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-movimentacoes">
+            <tr><td colspan="4" class="no-results">Carregando...</td></tr>
+        </tbody>
+    </table>
+
+    <div class="btn-ajustar">
+        <button type="button" onclick="window.location.href='gerenciamento.html'">Voltar ao Início</button>
+    </div>
+
+    <script type="module" src="../src/js/emprestimosDevolucoes.js"></script>
+
+</body>
+</html>
