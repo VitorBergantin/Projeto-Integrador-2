@@ -80,7 +80,17 @@ export function showLivros(container){
 
           const cover = document.createElement("div");
           cover.className = "livro-cover";
-          cover.textContent = "imagem não disponível";
+          if (data.coverUrl) {
+            const img = document.createElement('img');
+            img.src = data.coverUrl;
+            img.alt = data.nome || 'Capa do livro';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            cover.appendChild(img);
+          } else {
+            cover.textContent = "imagem não disponível";
+          }
 
           const title = document.createElement("h3");
           title.textContent = data.nome || "Sem título";

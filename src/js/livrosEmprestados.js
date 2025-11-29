@@ -41,8 +41,12 @@ function carregarLivrosEmprestados() {
       const card = document.createElement("article");
       card.className = "livro-card";
 
+      const coverInner = data.coverUrl
+        ? `<img src="${data.coverUrl}" alt="${data.nome || 'Capa'}" style="width:100%;height:100%;object-fit:cover;" />`
+        : 'imagem não disponível';
+
       card.innerHTML = `
-        <div class="livro-cover">imagem não disponível</div>
+        <div class="livro-cover">${coverInner}</div>
         <h3>${data.nome || "Sem título"}</h3>
         <p><strong>Autor:</strong> ${data.autor || "—"}</p>
         <p><strong>Editora:</strong> ${data.editora || "—"}</p>

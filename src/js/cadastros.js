@@ -7,9 +7,10 @@
 // e as operações do SDK modular (collection, addDoc, serverTimestamp).
 // CORREÇÃO: Alterado o caminho da importação para usar o mesmo config do Totem.
 // CORREÇÃO FINAL: Unificando para usar o arquivo de configuração principal em src/lib/
-import { db } from "../lib/firebase.js";
+import { db, storage } from "../lib/firebase.js";
 
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js";
 
 // Estilo CSS para o toast
 const style = document.createElement('style');
@@ -160,6 +161,10 @@ async function cadastrarLivro(form) {
     }
 
     try {
+        // desabilitar botão de submit para evitar múltiplos uploads
+        const submitBtn = form.querySelector('[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
         // Monta o objeto do livro e grava no Firestore
         const payload = {
             codigo,
@@ -170,11 +175,47 @@ async function cadastrarLivro(form) {
             disponivel: 1
         };
 
+        // se houver um arquivo selecionado, faça upload para Storage
+        const fileInput = form.querySelector('#coverInput');
+        const file = fileInput?.files?.[0];
+        if (file) {
+            // validações básicas: tipo e tamanho
+            if (!file.type.startsWith('image/')) {
+                showToast('Capa deve ser um arquivo de imagem.', 'error');
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+            const maxBytes = 3 * 1024 * 1024; // 3 MB
+            if (file.size > maxBytes) {
+                showToast('A imagem excede o limite de 3MB.', 'error');
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            // gerar caminho único
+            const safeName = (file.name || 'cover').replace(/[^a-z0-9.\-_]/gi, '_');
+            const path = `livros/covers/${codigo}-${Date.now()}-${safeName}`;
+            const sRef = storageRef(storage, path);
+
+            // upload com progresso mínimo
+            await new Promise((resolve, reject) => {
+                const task = uploadBytesResumable(sRef, file);
+                task.on('state_changed', null, (err) => reject(err), async () => {
+                    try {
+                        const url = await getDownloadURL(task.snapshot.ref);
+                        payload.coverUrl = url;
+                        resolve(url);
+                    } catch (e) { reject(e); }
+                });
+            });
+        }
+
         await addDoc(collection(db, 'livros'), payload);
 
         // Feedback ao usuário e limpeza do formulário
         showToast('Livro cadastrado com sucesso!', 'success');
         form.reset();
+        if (submitBtn) submitBtn.disabled = false;
     } catch (err) {
         // Log e notificação de erro
         console.error('Erro ao cadastrar livro:', err);
@@ -197,6 +238,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Procura especificamente pelo formulário de cadastro de livro
     const formLivro = document.querySelector('form#form-livro');
     if (formLivro) {
+        // preview de capa quando o usuário selecionar um arquivo
+        const fileInput = formLivro.querySelector('#coverInput');
+        const preview = document.getElementById('cover-preview');
+        if (fileInput && preview) {
+            fileInput.addEventListener('change', () => {
+                const f = fileInput.files?.[0];
+                preview.innerHTML = '';
+                if (!f) return;
+                if (!f.type.startsWith('image/')) {
+                    preview.textContent = 'Arquivo selecionado não é uma imagem.';
+                    return;
+                }
+                const img = document.createElement('img');
+                img.style.maxWidth = '180px';
+                img.style.maxHeight = '220px';
+                img.style.objectFit = 'cover';
+                img.src = URL.createObjectURL(f);
+                preview.appendChild(img);
+            });
+        }
         formLivro.addEventListener('submit', (e) => {
             e.preventDefault();
             cadastrarLivro(formLivro);

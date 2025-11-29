@@ -26,7 +26,12 @@
 
         <label for="editora">Editora do Livro:</label>
         <input type="text" id="editora" name="editora" required>
-        <br><br><br>
+        <br><br>
+
+        <label for="coverInput">Capa do livro (imagem, opcional, max 3MB):</label>
+        <input type="file" id="coverInput" name="coverInput" accept="image/*">
+        <div id="cover-preview" style="margin-top:8px"></div>
+        <br><br>
         <button type="submit">Cadastrar</button>
         <br><br>
         <button type="button" id="voltarbtn" onclick="location.href='index.html'">Voltar ao inicio</button>
