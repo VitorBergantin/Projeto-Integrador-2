@@ -96,3 +96,12 @@ input[type="text"] {
 .center-main{ text-align:center; padding-top:48px; }
 
 .situacao { margin-bottom: 8px; color: #fff; font-weight: 600; }
+
+#resultado .card {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    font-size: 1.1rem;
+}

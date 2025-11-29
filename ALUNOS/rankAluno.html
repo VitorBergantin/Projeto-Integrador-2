@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rank Aluno</title>
+    <link rel="stylesheet" href="rankAluno.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Seu rank atual:</h1>
+      <p class="subtitle">Baseado nos livros lidos neste semestre.</p>
+    
+      <h2>Consultar Meus Dados</h2>
+
+      <input id="ra-input" type="text" placeholder="Digite seu RA"><br><br>
+      <button id="buscar-btn">Buscar</button>
+
+<div id="resultado"></div>
+
+      <section class="placeholder-list">
+        <ul id="top-readers-list" class="leader" aria-label="Top leitores" aria-live="polite" role="list"></ul>
+      </section>
+
+      <button type="button" id="voltarbtn" onclick="location.href='index.html'">Voltar ao inicio</button>
+</main>
+    <script type="module" src="consultar_leitor.js"></script>
+    <script type="module" src="../src/js/rankAluno.js"></script>
+    <script src="../src/js/navigation.js" defer></script>
+  </body>
+</html>

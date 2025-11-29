@@ -9,15 +9,15 @@
 	<body>
 		<main class="container">
 			<h1>Todos os Livros</h1>
-			<button type="button" id="voltarbtn" onclick="location.href='index.html'">Voltar ao inicio</button><br>
+			<div class="btn-ajustar">
+				<button type="button" id="voltarbtn" onclick="location.href='gerenciamento.html'">Voltar ao inicio</button><br>
+			</div>
 			<section id="livros-container">
 				<p>Carregando livros...</p>
 			</section>
 		</main>
 
 		<script src="../src/js/navigation.js" defer></script>
-		3+<!-- Flag para ativar o modo bibliotecário (renderiza todos os livros) -->
-		<script>window.__LIBRARIAN_PAGE = true;</script>
 		<script type="module" src="../src/js/todosLivros.js"></script>
 	</body>
 </html>

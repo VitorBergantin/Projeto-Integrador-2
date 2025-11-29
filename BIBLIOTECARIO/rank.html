@@ -1,32 +1,35 @@
 <!doctype html>
 <html lang="pt-BR">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width,initial-scale=1" />
-		<title>Rankeamento — Projeto Integrador</title>
-		<link rel="stylesheet" href="rank.css">
-	</head>
-	<body>
-		<main class="container">
-			<h1>Rankeamento dos Alunos</h1>
-			<p class="subtitle">Página inicial do módulo de rankeamento. Aqui será exibido o ranking geral dos leitores e livros.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Top Leitores — Rankeamento</title>
+    <link rel="stylesheet" href="todosLivros.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Top Leitores</h1>
+      <p class="subtitle">Lista dos usuários que mais leram neste semestre.</p>
+      <table id="tabela-ranking" border="1" cellpadding="8" style="margin: 20px auto; width: 90%; text-align: center;">
+        <thead>
+            <tr>
+                <th>Nome do Aluno</th>
+                <th>RA</th>
+                <th>Quantidade de Empréstimos</th>
+                <th>Rank</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="4">Carregando...</td></tr>
+        </tbody>
+      </table>
 
-			<section class="leaderboard">
-				<!-- Painel de Fornecedores removido por solicitação -->
-
-				<div class="panel">
-					<h2>Top Leitores</h2>
-						<a href="top-readers.html" class="btn secondary small">Ver todos</a>
-					<p class="subtitle">Alunos mais dedicados da Biblioteca — posição e número de leituras.</p>
-					<ul class="leader" id="top-books-list" aria-label="Top Alunos"></ul>
-				</div>
-			</section>
-			<button type="button" id="voltarbtn" onclick="location.href='index.html'">Voltar ao inicio</button>
-		</main>
-
-		<!-- Script de renderização de placeholders do rank (mock) -->
-		<script type="module" src="../src/js/rank.js" defer></script>
-		<!-- Script de navegação flutuante (se disponível) -->
-		<script src="../src/js/navigation.js" defer></script>
-	</body>
+      <div class="btn-ajustar">
+				<button type="button" id="voltarbtn" onclick="location.href='gerenciamento.html'">Voltar ao inicio</button><br>
+			</div>
+      <script src="rank.js"></script>
+</main>
+    <script type="module" src="../src/js/rank.js"></script>
+    <script src="../src/js/navigation.js" defer></script>
+  </body>
 </html>

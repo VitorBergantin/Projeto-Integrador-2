@@ -23,8 +23,16 @@ h1{ color:var(--accent); margin-bottom:18px }
 @media (max-width:520px){ .livros-grid{ grid-template-columns:repeat(2,1fr) } }
 @media (max-width:360px){ .livros-grid{ grid-template-columns:1fr } }
 
+
+h1 {
+    text-align: center;
+}
+
+.btn-ajustar {
+    text-align: center;
+}
+
 button {
-    width: 100%;
     padding: 10px;
     border-radius: 10px;
     transition: all 0.4s ease;
@@ -37,4 +45,27 @@ button {
 
 button:hover {
     transform: scale(1.1);
+}
+
+table {
+    margin: 0 auto;
+    width: 85%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.no-results {
+    text-align: center;
+    font-style: italic;
+    color: #777;
 }
