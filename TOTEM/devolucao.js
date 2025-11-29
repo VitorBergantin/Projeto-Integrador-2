@@ -3,7 +3,7 @@
 
 import { db } from "../src/lib/firebase.js";
 import { 
-    collection, query, where, getDocs, doc, updateDoc, serverTimestamp 
+    collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
 // --- TOAST CSS ---
@@ -88,7 +88,7 @@ devolucaoForm.addEventListener('submit', async (event) => {
             emprestimosRef,
             where("ra", "==", ra),
             where("codigoLivro", "==", codigoLivro),
-            where("disponivel", "==", 0)
+            where("status", "==", "ativo") // melhor que usar disponivel
         );
 
         const emprestimosSnapshot = await getDocs(emprestimosQuery);
@@ -98,18 +98,27 @@ devolucaoForm.addEventListener('submit', async (event) => {
             return;
         }
 
-        const emprestimosDoc = emprestimosSnapshot.docs[0];
-        const emprestimosDocRef = doc(db, "emprestimos", emprestimosDoc.id);
+        const emprestimoDoc = emprestimosSnapshot.docs[0];
+        const emprestimoRef = doc(db, "emprestimos", emprestimoDoc.id);
 
-        await updateDoc(emprestimosDocRef, {
+        // 4. Atualizar o empréstimo → devolvido
+        await updateDoc(emprestimoRef, {
+            status: "devolvido",
             dataDevolucao: serverTimestamp()
         });
 
         // 5. Atualizar livro → disponível
         const livroDocRef = doc(db, "livros", livroDoc.id);
-
         await updateDoc(livroDocRef, {
             disponivel: 1
+        });
+
+        // 6. Registrar devolução na coleção "devolucao"
+        await addDoc(collection(db, "devolucao"), {
+            ra: ra,
+            codigoLivro: codigoLivro,
+            nomeLivro: livroData.nome,
+            dataDevolucao: serverTimestamp()
         });
 
         showToast(

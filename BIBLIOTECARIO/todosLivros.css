@@ -22,3 +22,19 @@ h1{ color:var(--accent); margin-bottom:18px }
 
 @media (max-width:520px){ .livros-grid{ grid-template-columns:repeat(2,1fr) } }
 @media (max-width:360px){ .livros-grid{ grid-template-columns:1fr } }
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+    color: white;
+    background-color: rgba(100, 60, 250, 0.9);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.1);
+}

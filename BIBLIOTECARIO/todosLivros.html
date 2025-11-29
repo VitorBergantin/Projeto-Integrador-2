@@ -4,11 +4,12 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Bibliotecário — Livros</title>
-		<link href="livrosDisponiveis.css" rel="stylesheet">
+		<link href="todosLivros.css" rel="stylesheet">
 	</head>
 	<body>
 		<main class="container">
 			<h1>Todos os Livros</h1>
+			<button type="button" id="voltarbtn" onclick="location.href='index.html'">Voltar ao inicio</button><br>
 			<section id="livros-container">
 				<p>Carregando livros...</p>
 			</section>
@@ -17,6 +18,6 @@
 		<script src="../src/js/navigation.js" defer></script>
 		3+<!-- Flag para ativar o modo bibliotecário (renderiza todos os livros) -->
 		<script>window.__LIBRARIAN_PAGE = true;</script>
-		<script type="module" src="../src/js/livrosDisponiveis.js"></script>
+		<script type="module" src="../src/js/todosLivros.js"></script>
 	</body>
 </html>

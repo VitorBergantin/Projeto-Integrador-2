@@ -184,7 +184,6 @@ async function cadastrarLivro(form) {
 }
 
 // Inicializa listeners automaticamente quando o módulo é importado em uma página com formulário
-// VERSÃO CORRIGIDA E MAIS ROBUSTA
 document.addEventListener('DOMContentLoaded', () => {
     // Procura especificamente pelo formulário de cadastro de aluno
     const formAluno = document.querySelector('form#form-aluno');
