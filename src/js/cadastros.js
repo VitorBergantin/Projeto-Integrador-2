@@ -7,10 +7,11 @@
 // e as operações do SDK modular (collection, addDoc, serverTimestamp).
 // CORREÇÃO: Alterado o caminho da importação para usar o mesmo config do Totem.
 // CORREÇÃO FINAL: Unificando para usar o arquivo de configuração principal em src/lib/
-import { db, storage } from "../lib/firebase.js";
+import { db, storage, auth } from "../lib/firebase.js";
 
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-storage.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 // Estilo CSS para o toast
 const style = document.createElement('style');
@@ -198,6 +199,9 @@ async function cadastrarLivro(form) {
             const safeName = (file.name || 'cover').replace(/[^a-z0-9.\-_]/gi, '_');
             const path = `livros/covers/${codigo}-${Date.now()}-${safeName}`;
             const sRef = storageRef(storage, path);
+
+            // garantir autenticação anônima (muitos projetos obrigam auth para escrita)
+            try { await signInAnonymously(auth); } catch (err) { /* ignora, pode já estar autenticado */ }
 
             // upload com progresso mínimo
             await new Promise((resolve, reject) => {
