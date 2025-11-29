@@ -30,7 +30,8 @@
 
         <label for="coverInput">Capa do livro (imagem, opcional, max 3MB):</label>
         <input type="file" id="coverInput" name="coverInput" accept="image/*">
-        <div id="cover-preview" style="margin-top:8px"></div>
+        <div id="cover-preview" class="cover-preview" aria-hidden="true"></div>
+        <div id="upload-status" aria-live="polite"></div>
         <br><br>
         <button type="submit">Cadastrar</button>
         <br><br>

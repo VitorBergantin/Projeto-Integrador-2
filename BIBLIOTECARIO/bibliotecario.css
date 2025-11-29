@@ -58,6 +58,10 @@ form {
     width: 40%;
 }
 
+/* preview de capa */
+.cover-preview img { max-width: 180px; max-height: 220px; object-fit: cover; border-radius:6px; }
+#upload-status { margin-top:8px; color:#111; font-size:0.95rem; text-align: left; }
+
 input[type="text"] {
     width: 70%;
     padding: 3px 8px;

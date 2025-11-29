@@ -165,6 +165,8 @@ async function cadastrarLivro(form) {
         console.log('[cadastros] cadastrarLivro: iniciando cadastro do livro', { codigo, nome });
         // desabilitar botão de submit para evitar múltiplos uploads
         const submitBtn = form.querySelector('[type="submit"]');
+        const statusEl = document.getElementById('upload-status');
+        if (statusEl) statusEl.textContent = 'Preparando envio...';
         if (submitBtn) submitBtn.disabled = true;
 
         // Monta o objeto do livro e grava no Firestore
@@ -203,37 +205,56 @@ async function cadastrarLivro(form) {
             // garantir autenticação anônima (muitos projetos obrigam auth para escrita)
             try { await signInAnonymously(auth); } catch (err) { /* ignora, pode já estar autenticado */ }
 
-            // upload com progresso mínimo
+            // upload com progresso mínimo e feedback ao usuário
             await new Promise((resolve, reject) => {
                 const task = uploadBytesResumable(sRef, file);
                 task.on('state_changed', (snap) => {
-                    // opcional: progresso
                     const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
                     console.log('[cadastros] upload progresso %', pct);
-                }, (err) => reject(err), async () => {
+                    if (statusEl) statusEl.textContent = `Upload: ${pct}%`;
+                }, (err) => {
+                    console.error('[cadastros] upload falhou', err);
+                    if (statusEl) statusEl.textContent = `Erro no upload: ${err && err.message ? err.message : err}`;
+                    showToast(err && err.message ? `Upload falhou: ${err.message}` : 'Erro no upload', 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    reject(err);
+                }, async () => {
                     try {
                         const url = await getDownloadURL(task.snapshot.ref);
                         console.log('[cadastros] upload concluído, url=', url);
                         payload.coverUrl = url;
+                        if (statusEl) statusEl.textContent = 'Upload concluído';
                         resolve(url);
-                    } catch (e) { reject(e); }
+                    } catch (e) {
+                        console.error('[cadastros] erro getDownloadURL', e);
+                        if (statusEl) statusEl.textContent = `Erro obtendo URL: ${e && e.message ? e.message : e}`;
+                        showToast(e && e.message ? `Erro ao obter URL: ${e.message}` : 'Erro ao obter URL', 'error');
+                        if (submitBtn) submitBtn.disabled = false;
+                        reject(e);
+                    }
                 });
             });
         }
 
         console.log('[cadastros] Gravando documento do livro no Firestore...', payload);
+        if (statusEl) statusEl.textContent = 'Gravando livro no banco...';
         await addDoc(collection(db, 'livros'), payload);
         console.log('[cadastros] Livro cadastrado com sucesso no Firestore');
 
         // Feedback ao usuário e limpeza do formulário
         showToast('Livro cadastrado com sucesso!', 'success');
         form.reset();
+        if (statusEl) statusEl.textContent = 'Pronto.';
         if (submitBtn) submitBtn.disabled = false;
     } catch (err) {
         // Log e notificação de erro
         console.error('Erro ao cadastrar livro:', err);
-        showToast('Erro ao cadastrar livro. Tente novamente.', 'error');
+        const message = err && err.message ? err.message : String(err);
+        showToast(`Erro ao cadastrar: ${message}`, 'error');
+        if (statusEl) statusEl.textContent = `Erro: ${message}`;
         showError(err);
+        // re-habilitar botão para nova tentativa
+        if (submitBtn) submitBtn.disabled = false;
     }
 }
 
