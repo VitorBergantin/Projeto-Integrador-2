@@ -28,3 +28,16 @@ button {
 button:hover {
     transform: scale(1.1);
 }
+
+/* Card simples usado pelo resultado do aluno */
+.card {
+    background: #fff;
+    padding: 14px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    max-width: 680px;
+    margin: 12px auto;
+    text-align: left;
+}
+
+.card p { margin: 6px 0; color: #333; }
