@@ -1,6 +1,6 @@
 // src/js/livrosDisponiveis.js
 import { db, auth } from "../lib/firebase.js";
-import { collection, query, orderBy, onSnapshot, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+import { collection, query, orderBy, onSnapshot, getDocs, limit, updateDoc, doc as docRef } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
 function escapeHtml(s){
@@ -72,8 +72,9 @@ export function showLivros(container){
         const grid = document.createElement("div");
         grid.className = "livros-grid";
 
-        snap.forEach(doc => {
-          const data = doc.data();
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          const docId = docSnap.id;
 
           const card = document.createElement("article");
           card.className = "livro-card";
@@ -107,12 +108,24 @@ export function showLivros(container){
           const disponivel = document.createElement("p");
           disponivel.innerHTML = `<strong>Disponível:</strong> ${escapeHtml(String(data.disponivel ?? "—"))}`;
 
+          // botão de edição (somente para bibliotecário nesta página)
+          const editBtn = document.createElement('button');
+          editBtn.type = 'button';
+          editBtn.textContent = 'Editar';
+          editBtn.style.marginLeft = '8px';
+          editBtn.addEventListener('click', () => {
+            // substituir conteúdo do card por um formulário de edição simples
+            renderEditForm(card, docId, data);
+          });
+
           card.appendChild(cover);
           card.appendChild(title);
           card.appendChild(autor);
           card.appendChild(editora);
           card.appendChild(codigo);
           card.appendChild(disponivel);
+          // adiciona o botão de edição ao final do card
+          card.appendChild(editBtn);
 
           grid.appendChild(card);
         });
@@ -134,3 +147,88 @@ document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("livros-container");
   if (container) showLivros(container);
 });
+
+// Renderiza o formulário de edição inline dentro do card
+function renderEditForm(cardEl, docId, current) {
+  // guardar estado original para poder cancelar
+  const original = cardEl.innerHTML;
+
+  cardEl.innerHTML = '';
+  const form = document.createElement('form');
+  form.className = 'edit-livro-form';
+
+  const nomeInput = document.createElement('input');
+  nomeInput.type = 'text'; nomeInput.value = current.nome || '';
+  nomeInput.placeholder = 'Nome do livro'; nomeInput.required = true;
+
+  const autorInput = document.createElement('input');
+  autorInput.type = 'text'; autorInput.value = current.autor || '';
+  autorInput.placeholder = 'Autor'; autorInput.required = true;
+
+  const editoraInput = document.createElement('input');
+  editoraInput.type = 'text'; editoraInput.value = current.editora || '';
+  editoraInput.placeholder = 'Editora'; editoraInput.required = true;
+
+  const codigoInput = document.createElement('input');
+  codigoInput.type = 'text'; codigoInput.value = current.codigo || '';
+  codigoInput.placeholder = 'Código'; codigoInput.required = true;
+
+  const disponivelLabel = document.createElement('label');
+  disponivelLabel.style.display = 'block';
+  const disponivelCheckbox = document.createElement('input');
+  disponivelCheckbox.type = 'checkbox';
+  disponivelCheckbox.checked = Number(current.disponivel) === 1;
+  disponivelLabel.appendChild(disponivelCheckbox);
+  disponivelLabel.appendChild(document.createTextNode(' Disponível'));
+
+  const saveBtn = document.createElement('button');
+  saveBtn.type = 'button'; saveBtn.textContent = 'Salvar';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancelar';
+  saveBtn.style.marginRight = '8px';
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true; cancelBtn.disabled = true;
+    try {
+      // preparar payload
+      const payload = {
+        nome: nomeInput.value.trim(),
+        autor: autorInput.value.trim(),
+        editora: editoraInput.value.trim(),
+        codigo: codigoInput.value.trim(),
+        disponivel: disponivelCheckbox.checked ? 1 : 0
+      };
+
+      // garantir auth anônimo antes de tentar gravar
+      try { await signInAnonymously(auth); } catch (e) { /* ignore */ }
+
+      await updateDoc(docRef(db, 'livros', docId), payload);
+      alert('Livro atualizado com sucesso.');
+      // opcional: restaurar (snapshot do onSnapshot vai atualizar automaticamente)
+    } catch (err) {
+      console.error('Erro atualizando livro', err);
+      alert('Erro ao atualizar o livro. Veja console.');
+      saveBtn.disabled = false; cancelBtn.disabled = false;
+      return;
+    }
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    cardEl.innerHTML = original;
+  });
+
+  form.appendChild(nomeInput);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(autorInput);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(editoraInput);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(codigoInput);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(disponivelLabel);
+  form.appendChild(document.createElement('br'));
+  form.appendChild(saveBtn);
+  form.appendChild(cancelBtn);
+
+  cardEl.appendChild(form);
+}

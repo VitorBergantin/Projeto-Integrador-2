@@ -69,3 +69,9 @@ tr:nth-child(even) {
     font-style: italic;
     color: #777;
 }
+
+/* Estilos para o formulário de edição inline */
+.edit-livro-form input[type="text"] { width: 100%; padding: 8px; margin: 6px 0; border-radius:6px; border:1px solid #e0e0e0 }
+.edit-livro-form button { padding: 8px 10px; border-radius:6px; border: none; cursor: pointer }
+.edit-livro-form button[type="button"] { background: rgba(100,60,250,0.9); color:white }
+.edit-livro-form button[disabled] { opacity: 0.6; cursor: not-allowed }
