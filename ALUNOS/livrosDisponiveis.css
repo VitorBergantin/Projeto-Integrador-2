@@ -22,7 +22,23 @@ h1 {
     color: var(--accent);
     margin-bottom: 18px;
 }
+    .btn-ajustar {
+    text-align: center;
+}
+button {
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+    color: white;
+    background-color: rgba(100, 60, 250, 0.9);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
 
+button:hover {
+    transform: scale(1.1);
+}
 #livros-container p {
     color: var(--muted);
 }
@@ -77,3 +93,4 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
